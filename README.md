@@ -9,5 +9,5 @@ npm run dev
 ```
 
 ```
-open http://localhost:3030
+open http://localhost:3030/?pretty in the browser
 ```
