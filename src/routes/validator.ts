@@ -99,53 +99,39 @@ validatorRouter.get('/validators', async (c) => {
   })
 
 
-// app.post('/', async (req) => {
-//   const client = await pool.connect();
-//   try {
-//     console.log('Connected to database for POST request');
+ 
 
-//     const data = await req.json();
-//     const {
-//       public_key,
-//       validator_index,
-//       cluster_id,
-//       balance,
-//       status,
-//       score,
-//       rollupname,
-//     } = data.validator;
+  validatorRouter.post('/validatorUpdate', async (c ) => {
+    const client = await pool.connect();
+  try {
+    console.log('Connected to database:', dbConfig);
+    const Data  = await c.req.json()
+    console.log("Data", Data)
+    const { public_key, balance, status, score } = Data.validator
+ 
+      const result = await pool.query(
+        "UPDATE validators SET balance = $1, status = $2, score = $3 , last_update_time = NOW() WHERE public_key = $4 RETURNING *",
+        [balance, status, score, public_key]
+      )
 
-//     const result = await client.query(
-//       'INSERT INTO VALIDATORS (public_key, validator_index, cluster_id, balance, status, last_update_time, score, rollupname) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, $6, $7) RETURNING *',
-//       [
-//         public_key,
-//         validator_index,
-//         cluster_id,
-//         balance,
-//         status,
-//         score,
-//         rollupname,
-//       ]
-//     );
-
-//     return new Response(
-//       JSON.stringify({ data: result.rows, result: "Validator created successfully" }),
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error('Error creating validator:', error);
-//     return new Response(
-//       JSON.stringify({ message: "Internal Validator failed to create" }),
-//       { status: 500 }
-//     );
-//   } finally {
-//     if (client) {
-//       client.release();
-//       console.log('Database connection released after POST request');
-//     }
-//   }
-// });
-
+    return c.json(({ message : "Validator Updated successfully" }),   200 );
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return c.json(
+      JSON.stringify({ message: 'Failed to Update validator data' }),
+      500 
+    );
+  }
+  
+  finally {
+    if (client) {
+     
+      client.release();
+      console.log('Database connection released');
+    }
+  }
+ 
+  })
 
 
 export default validatorRouter  
