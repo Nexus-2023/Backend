@@ -1,14 +1,14 @@
 import { Validator } from "../types"
 import { Hono } from "hono"
-import * as dotenv from 'dotenv';
-dotenv.config();
+ 
+import { API_ENDPOINTS , ENV} from "./constants";
+ 
 
-const port = parseInt(process.env.SERVER_PORT as string, 10) || 3030
-
+ 
 async function getValidators() {
 
   try {
-    const validatorsData = await fetch(`http://localhost:${port}/route/validators`,  {
+    const validatorsData = await fetch( API_ENDPOINTS.VALIDATOR_ROUTE,  {
       method: "GET",
       cache: "no-store",
  
@@ -24,7 +24,7 @@ async function getValidators() {
 
 async function postValidator({ validator } : any) {
   try {
-    const response = await fetch(`http://localhost:${port}/route/validators`, {
+    const response = await fetch( API_ENDPOINTS.VALIDATOR_ROUTE, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

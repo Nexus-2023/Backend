@@ -2,17 +2,17 @@ import { Hono } from "hono";
 import { Pool , QueryResult} from "pg"
 import { DatabaseConfig, Validator , ValidatorsResponse } from "../types";
 import * as dotenv from 'dotenv';
- 
+import { API_ENDPOINTS , ENV } from "../utils/constants";
 dotenv.config();
 const validatorRouter = new Hono()
 
 
 const dbConfig: DatabaseConfig = {
-    host: process.env.DB_HOST || "localhost",
-    port: parseInt(process.env.DB_PORT as string, 10) || 5432,
-    database: process.env.DB_DATABASENAME || "dbName",
-    user: process.env.DB_USERNAME || "defaultUser",
-    password: process.env.DB_PASSWORD || "defaultPass",
+    host:  ENV.DB_HOST  ,
+    port:  ENV.DB_PORT  ,
+    database:  ENV.DB_DATABASENAME  ,
+    user:  ENV.DB_USERNAME  ,
+    password:  ENV.DB_PASSWORD  ,
   };
 
   
