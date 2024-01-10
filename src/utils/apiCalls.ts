@@ -22,9 +22,34 @@ async function getValidators() {
   }
 }
 
+async function postValidator({ validator } : any) {
+  try {
+    const response = await fetch(`http://localhost:${port}/route/validators`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ validator }),
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to create validator.")
+    }
+
+    const data = await response.json()
+    
+
+    return data
+  } catch (error) {
+    console.error("Error creating validator:", error)
+  }
+}
+
+
+
 
 export {
 
   getValidators,
-
+  postValidator
 }

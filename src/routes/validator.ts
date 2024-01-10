@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const validatorRouter = new Hono()
 
- 
+
 const dbConfig: DatabaseConfig = {
     host: process.env.DB_HOST || "localhost",
     port: parseInt(process.env.DB_PORT as string, 10) || 5432,
@@ -50,7 +50,7 @@ validatorRouter.get('/validators', async (c) => {
   })
 
 
-  validatorRouter.post('/validators', async (c , args) => {
+  validatorRouter.post('/validators', async (c ) => {
     const client = await pool.connect();
   try {
     console.log('Connected to database:', dbConfig);
