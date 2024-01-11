@@ -12,8 +12,6 @@ dotenv.config();
   };
   
   
-
-
    const API_ENDPOINTS = {
 
     SUBGRAPH:  process.env.GRAPH_URI || "NULL",

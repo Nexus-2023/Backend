@@ -6,8 +6,9 @@ import {
     GET_ALL_VALIDATORS,
   } from "../subGraphQueries"
   import { client } from '../lib/client';
-
-
+  import { request, gql } from 'graphql-request'
+  import { API_ENDPOINTS , ENV } from '../utils/constants';
+import { validatorSubgraphResult ,ValidatorData } from "../types";
 
   // TODO : Implement CalulateScore
   function calculateScore(balance :  number, slashed : boolean) {
@@ -26,8 +27,11 @@ import {
   }
   
   const getLatestValidatorSubgraphResult = async () => {
-    const result =  await client.query({ query : GET_ALL_ROLLUPS })
-    return result.data.validators
+    
+    // const result =  await client.query({ query : GET_ALL_ROLLUPS })
+    const result:ValidatorData =  await request(API_ENDPOINTS.SUBGRAPH, GET_ALL_VALIDATORS ) 
+    // return result.data.validators
+    return result.validators
   }
   
   export { calculateScore, arraysEqual, getLatestValidatorSubgraphResult }
