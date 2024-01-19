@@ -12,6 +12,7 @@
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "hono": "^3.12.0",
+    "node-cron": "^3.0.3",
     "pg": "^8.11.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
+    "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.10.9",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",

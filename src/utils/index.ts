@@ -9,6 +9,7 @@ import {
   import { request, gql } from 'graphql-request'
   import { API_ENDPOINTS , ENV } from '../utils/constants';
 import { validatorSubgraphResult ,ValidatorData } from "../types";
+import { createHash } from 'crypto';
 
   // TODO : Implement CalulateScore
   function calculateScore(balance :  number, slashed : boolean) {
@@ -32,6 +33,13 @@ import { validatorSubgraphResult ,ValidatorData } from "../types";
     const result:ValidatorData =  await request(API_ENDPOINTS.SUBGRAPH, GET_ALL_VALIDATORS ) 
     // return result.data.validators
     return result.validators
+  }
+
+
+  export function hashValidatorSubgraphResult(data: any): string {
+    const hash = createHash('sha256');
+    hash.update(JSON.stringify(data));
+    return hash.digest('hex');
   }
   
   export { calculateScore, arraysEqual, getLatestValidatorSubgraphResult }

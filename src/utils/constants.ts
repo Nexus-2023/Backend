@@ -1,16 +1,17 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
- 
-  const ENV = {
-    DB_HOST : process.env.DB_HOST || "localhost" ,
-    DB_USERNAME : process.env.DB_USERNAME || "defaultUser",
-    DB_PASSWORD : process.env.DB_PASSWORD || "defaultPass",
-    DB_DATABASENAME : process.env.DB_DATABASENAME || "dbName",    
-    DB_PORT : parseInt(process.env.DB_PORT as string, 10) || 5432 ,
-    SERVER_PORT : parseInt(process.env.SERVER_PORT as string, 10) || 3030 ,
 
-  };
-  
+const ENV = {
+  DB_HOST: process.env.DB_HOST || "localhost",
+  DB_USERNAME: process.env.DB_USERNAME || "defaultUser",
+  DB_PASSWORD: process.env.DB_PASSWORD || "defaultPass",
+  DB_DATABASENAME: process.env.DB_DATABASENAME || "dbName",
+  DB_SCHEMA: process.env.DB_SCHEMA || "schema",
+  DB_PORT: parseInt(process.env.DB_PORT as string, 10) || 5432,
+  SERVER_PORT: parseInt(process.env.SERVER_PORT as string, 10) || 4030,
+
+};
+
   
    const API_ENDPOINTS = {
 
