@@ -1,11 +1,9 @@
-import {  POST_VALIDATORS} from "./database";
-import { getLatestValidatorSubgraphResult } from ".";
-import { hashValidatorSubgraphResult } from ".";
-var cron = require('node-cron');
+import { POST_VALIDATORS, FETCH_AND_UPDATE_VALIDATORS } from "./database"
+import { getLatestValidatorSubgraphResult } from "."
+import { hashValidatorSubgraphResult } from "."
+var cron = require("node-cron")
 
-
-
- /* @Developer
+/* @Developer
     This cron job is scheduled to run every 30 minutes using node-cron.
 
     The purpose of this job is to periodically fetch data from the subgraph, hash the data, and compare the hash with the previous hash.
@@ -20,26 +18,39 @@ var cron = require('node-cron');
     6. If the hashes are the same, log that no new validators were found.
 
 */
-let previousHash: string | null = null;
-cron.schedule('*/30 * * * *', async () => {
+let previousHash: string | null = null
+const job1 = cron.schedule("*/30 * * * *", async () => {
   try {
-    const validatorSubgraphResult = await getLatestValidatorSubgraphResult();
+    const validatorSubgraphResult = await getLatestValidatorSubgraphResult()
 
     if (validatorSubgraphResult && validatorSubgraphResult.length > 0) {
-      const currentHash = hashValidatorSubgraphResult(validatorSubgraphResult);
+      const currentHash = hashValidatorSubgraphResult(validatorSubgraphResult)
 
       if (currentHash !== previousHash) {
-        await POST_VALIDATORS({validatorSubgraphResult})
-        previousHash = currentHash;
+        await POST_VALIDATORS({ validatorSubgraphResult })
+        previousHash = currentHash
       } else {
-        console.log("No new validators found in the subgraph query result.");
+        console.log("No new validators found in the subgraph query result.")
       }
     } else {
-      console.error("No validators found in the subgraph query result.");
+      console.error("No validators found in the subgraph query result.")
     }
   } catch (error) {
-    console.error("Error in cron job:", error);
-  
+    console.error("Error in cron job1:", error)
   }
-});
+})
 
+/* @Developer
+   This cron job is set to run every 30 minutes, calling the FETCH_AND_UPDATE_VALIDATORS function.
+   It ensures that the information about validators is regularly updated from the external API. 
+*/
+const job2 = cron.schedule("*/30 * * * *", async () => {
+  try {
+    await FETCH_AND_UPDATE_VALIDATORS()
+  } catch (error) {
+    console.error("Error in cron job2:", error)
+  }
+})
+
+job1.start()
+job2.start()

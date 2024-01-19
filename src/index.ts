@@ -10,7 +10,11 @@ import { request, gql } from "graphql-request"
 import { API_ENDPOINTS, ENV } from "./utils/constants"
 
 import { getLatestValidatorSubgraphResult } from "./utils"
-import { databaseSetup, POST_VALIDATORS } from "./utils/database"
+import {
+  databaseSetup,
+  POST_VALIDATORS,
+  FETCH_AND_UPDATE_VALIDATORS,
+} from "./utils/database"
 dotenv.config()
 
 const app = new Hono()
@@ -24,6 +28,7 @@ app.get("/graphql", async c => {
 })
 
 app.get("/", async c => {
+  const res = await FETCH_AND_UPDATE_VALIDATORS()
   return c.text("running cron")
 })
 

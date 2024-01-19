@@ -322,6 +322,66 @@ export async function INSERT_NODEOPERATORS({
 }
 
 /* @Developer
+   The FETCH_AND_UPDATE_VALIDATORS function is responsible for fetching and updating information
+   about validators from an external API (consensus API) and updating the database with the latest data.
+   
+   It begins by retrieving the existing validator data from the database using the GET_VALIDATORS function.
+   For each existing validator, it constructs the API URL using the validator's public key and makes a GET request
+   to the external API to fetch the latest information about the validator.
+   If the external API request is successful and the returned data is not an empty array, it extracts relevant
+   information, such as public key, balance, status, and calculates the score using the calculateScore function.
+
+*/
+export async function FETCH_AND_UPDATE_VALIDATORS() {
+  const existingValidators = await GET_VALIDATORS()
+
+  for (const existingValidator of existingValidators) {
+    const publicKey = existingValidator.public_key
+
+    const apiUrl = API_ENDPOINTS.BEACON_VALIDATOR(publicKey)
+
+    try {
+      const externalApiResult = await fetch(apiUrl, {
+        method: "GET",
+      })
+
+      if (!externalApiResult.ok) {
+        throw new Error(
+          `Failed to fetch validator data. Status: ${externalApiResult.status}`
+        )
+      }
+
+      const externalApiData = await externalApiResult.json()
+      const cond = externalApiData.data && externalApiData.data.length > 0
+
+      if (cond) {
+        const externalValidator = externalApiData.data
+
+        console.log("validator update externalValidator ", externalValidator)
+
+        const validator: any = {
+          public_key: externalValidator[0].validator.pubkey,
+          balance: externalValidator[0].balance,
+          status: externalValidator[0].status,
+          score: calculateScore(
+            externalValidator[0].balance,
+            externalValidator[0].validator.slashed
+          ),
+        }
+
+        await UPDATE_VALIDATOR({ validator })
+      } else {
+        console.log(
+          "public key is invalid , could not fetch from consensus api"
+        )
+      }
+    } catch (error) {
+      console.error("Error updating validator data:", error)
+    }
+  }
+}
+
+/* @Developer
     This function, UPDATE_VALIDATOR, is responsible for updating information about a specific validator in the database.    
     It connects to the database using a connection pool and executes an SQL UPDATE query to modify the balance, status, score,
     and last_update_time fields of the specified validator based on its public key.    
