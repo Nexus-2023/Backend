@@ -1,4 +1,8 @@
-import { POST_VALIDATORS, FETCH_AND_UPDATE_VALIDATORS } from "./database"
+import {
+  POST_VALIDATORS,
+  FETCH_AND_UPDATE_VALIDATORS,
+  FETCH_AND_INSERT_BLOCK,
+} from "./database"
 import { getLatestValidatorSubgraphResult } from "."
 import { hashValidatorSubgraphResult } from "."
 var cron = require("node-cron")
@@ -52,5 +56,19 @@ const job2 = cron.schedule("*/30 * * * *", async () => {
   }
 })
 
+/* @Developer
+   This cron job is set to run every 12 sec, calling the FETCH_AND_INSERT_BLOCK() function.   
+   It fetches block data and if the proposer is one of our validator then insert the block data
+*/
+
+const job3 = cron.schedule("*/12 * * * * *", async () => {
+  try {
+    await FETCH_AND_INSERT_BLOCK()
+  } catch (error) {
+    console.error("Error in cron job3:", error)
+  }
+})
+
 job1.start()
 job2.start()
+job3.start()

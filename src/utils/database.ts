@@ -15,6 +15,7 @@ import {
   calculateScore,
 } from "."
 import { Client, Pool } from "pg"
+import { escapeToBuffer } from "hono/utils/html"
 
 /* @Developer
     This function, GET_VALIDATORS, retrieves all rows from the VALIDATORS table in the database.    
@@ -42,6 +43,37 @@ export async function GET_VALIDATORS(): Promise<Array<any>> {
     return result.rows
   } catch (error) {
     console.error("Error in GET_VALIDATORS:", error)
+    throw error
+  } finally {
+    if (client) {
+      client.release()
+      console.log("Database connection released")
+    }
+  }
+}
+
+export async function GET_VALIDATOR_BY_INDEX(
+  validatorIndex: number
+): Promise<Array<any>> {
+  const dbConfig: DatabaseConfig = {
+    host: ENV.DB_HOST,
+    port: ENV.DB_PORT,
+    database: ENV.DB_DATABASENAME,
+    user: ENV.DB_USERNAME,
+    password: ENV.DB_PASSWORD,
+  }
+  const pool = new Pool(dbConfig)
+
+  const client = await pool.connect()
+  try {
+    const result = await client.query(
+      "SELECT * FROM VALIDATORS WHERE validator_index = $1;",
+      [validatorIndex]
+    )
+
+    return result.rows
+  } catch (error) {
+    console.error("Error in GET_VALIDATORS_BY_INDEX:", error)
     throw error
   } finally {
     if (client) {
@@ -357,8 +389,6 @@ export async function FETCH_AND_UPDATE_VALIDATORS() {
       if (cond) {
         const externalValidator = externalApiData.data
 
-        console.log("validator update externalValidator ", externalValidator)
-
         const validator: any = {
           public_key: externalValidator[0].validator.pubkey,
           balance: externalValidator[0].balance,
@@ -424,6 +454,60 @@ export async function UPDATE_VALIDATOR({
       client.release()
       console.log("Database connection released")
     }
+  }
+}
+
+export async function FETCH_AND_INSERT_BLOCK() {
+  const apiUrl = API_ENDPOINTS.BEACON_BLOCKS
+
+  try {
+    const externalApiResult = await fetch(apiUrl, {
+      method: "GET",
+    })
+
+    if (!externalApiResult.ok) {
+      throw new Error(
+        `Failed to fetch blocks data. Status: ${externalApiResult.status}`
+      )
+    }
+
+    const externalApiData = await externalApiResult.json()
+
+    const blocksData = externalApiData.data
+    // console.log("blocksData", blocksData)
+
+    const blockProposer = blocksData.message.proposer_index
+
+    const proposedValidator = await GET_VALIDATOR_BY_INDEX(blockProposer)
+    if (proposedValidator && proposedValidator.length > 0) {
+      console.log(
+        "Block proposer is from one of our validators:",
+        proposedValidator[0].public_key
+      )
+      if (blockProposer === proposedValidator[0].validator_index) {
+        const Block = {
+          block_number: blocksData.message.body.execution_payload.block_number,
+          block_proposer: blocksData.message.proposer_index,
+          slot: blocksData.message.slot,
+          validator_exit: blocksData.message.body.deposits.voluntary_exits, // [] extract further
+          withdrawals: blocksData.message.body.execution_payload.withdrawals, // [] extract further
+          proposer_slashings: blocksData.message.body.proposer_slashings, // []
+          finalized: externalApiData.finalized,
+        }
+
+        await INSERT_BLOCK({ Block })
+        console.log("FETCH_AND_INSERT_BLOCK successfull ")
+
+        return
+      } else {
+        console.log("Error blockproposer does not match validator index")
+        return
+      }
+    } else {
+      console.log("Block proposer is not from one of our validators.")
+    }
+  } catch (error) {
+    console.error("Error in blockinsert() ", error)
   }
 }
 
