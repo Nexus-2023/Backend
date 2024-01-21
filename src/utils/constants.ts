@@ -9,6 +9,7 @@ const ENV = {
   DB_SCHEMA: process.env.DB_SCHEMA || "schema",
   DB_PORT: parseInt(process.env.DB_PORT as string, 10) || 5432,
   SERVER_PORT: parseInt(process.env.SERVER_PORT as string, 10) || 4030,
+  TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || "api token",
 }
 
 const API_ENDPOINTS = {
@@ -24,23 +25,6 @@ const API_ENDPOINTS = {
     "NULL",
   BEACON_DETAILED_BLOCK: (root: string) =>
     `${process.env.BEACON_IP}/eth/v2/beacon/blocks${root}` || "NULL",
-  VALIDATOR_ROUTE:
-    `${process.env.BACKEND_ENDPOINT}${ENV.SERVER_PORT}/route/validators` ||
-    "NULL",
-  VALIDATOR_UPDATE_ROUTE:
-    `${process.env.BACKEND_ENDPOINT}${ENV.SERVER_PORT}/route/validatorUpdate` ||
-    "NULL",
-  BLOCK_ROUTE:
-    `${process.env.BACKEND_ENDPOINT}${ENV.SERVER_PORT}/route/Blocks` || "NULL",
-  BLOCK_UPDATE_ROUTE:
-    `${process.env.BACKEND_ENDPOINT}${ENV.SERVER_PORT}/route/BlockUpdate` ||
-    "NULL",
-  NODEOPERATOR_ROUTE:
-    `${process.env.BACKEND_ENDPOINT}${ENV.SERVER_PORT}/route/nodeOperators` ||
-    "NULL",
-  NODEOPERATOR_UPDATE_ROUTE:
-    `${process.env.BACKEND_ENDPOINT}${ENV.SERVER_PORT}/route/nodeOperatorUpdate` ||
-    "NULL",
 }
 
 export { API_ENDPOINTS, ENV }

@@ -52,6 +52,9 @@ export async function GET_VALIDATORS(): Promise<Array<any>> {
   }
 }
 
+/* @Developer
+    This function, GET_VALIDATOR_BY_INDEX, returns a validator from our Database with a given validator index         
+*/
 export async function GET_VALIDATOR_BY_INDEX(
   validatorIndex: number
 ): Promise<Array<any>> {
@@ -218,6 +221,42 @@ export async function POST_VALIDATORS({
       console.log(
         `Validator with public key ${publicKey} already exists. or validator is not activated`
       )
+    }
+  }
+}
+
+export async function POST_NODEOPERATORS({
+  nodeOperatorSubgraphResult,
+}: {
+  nodeOperatorSubgraphResult: any
+}) {
+  const existingnodeOperators = await GET_NODEOPERATORS()
+
+  for (const subgraphnodeOperator of nodeOperatorSubgraphResult) {
+    const publicKey = subgraphnodeOperator.id
+
+    const keyExists = existingnodeOperators.some(
+      (nodeOperator: nodeOperator) => nodeOperator.public_key === publicKey
+    )
+
+    if (!keyExists) {
+      try {
+        const nodeOperator: nodeOperator = {
+          public_key: nodeOperatorSubgraphResult.public_key,
+          name: nodeOperatorSubgraphResult.name,
+          validator_count: nodeOperatorSubgraphResult.validator_count,
+
+          score: 99,
+          node_operator_id: nodeOperatorSubgraphResult.node_operator_id,
+          cluster_id: nodeOperatorSubgraphResult.cluster_id,
+        }
+
+        await INSERT_NODEOPERATORS({ nodeOperator })
+      } catch (error) {
+        console.error("Error posting node operator data:", error)
+      }
+    } else {
+      console.log(`nodeOperator with public key ${publicKey} already exists.`)
     }
   }
 }
@@ -536,12 +575,10 @@ export async function databaseSetup() {
 /* @Testing
     This function, connectionTestDatabase, is a utility for testing the connection to the database.     
 */
-
 export async function connectionTestDatabase() {
   const dbConfig: DatabaseConfig = {
     host: ENV.DB_HOST,
     port: ENV.DB_PORT,
-
     user: ENV.DB_USERNAME,
     password: ENV.DB_PASSWORD,
     database: ENV.DB_DATABASENAME,
