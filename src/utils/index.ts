@@ -4,8 +4,9 @@ import {
   GET_ALL_CLUSTERS,
   GET_ALL_NODE_OPERATORS,
   GET_ALL_VALIDATORS,
-} from "../subGraphQueries"
-import { client } from "../lib/client"
+} from "../subgraph/queries"
+
+import { client } from "../connectors/subgraph_connector"
 import { request, gql } from "graphql-request"
 import { API_ENDPOINTS, ENV } from "../utils/constants"
 import {

@@ -8,13 +8,9 @@ import { logger } from "hono/logger"
 import { Hono } from "hono"
 import { request, gql } from "graphql-request"
 import { API_ENDPOINTS, ENV } from "./utils/constants"
-
+import { GET_VALIDATORS } from "./database/query"
 import { getLatestValidatorSubgraphResult } from "./utils"
-import {
-  databaseSetup,
-  POST_VALIDATORS,
-  FETCH_AND_UPDATE_VALIDATORS,
-} from "./utils/database"
+import { databaseSetup } from "./database/setup"
 dotenv.config()
 
 const app = new Hono()
@@ -28,8 +24,10 @@ app.get("/graphql", async c => {
 })
 
 app.get("/", async c => {
-  const res = await FETCH_AND_UPDATE_VALIDATORS()
-  return c.text("running cron")
+  // const res = await GET_VALIDATORS()
+  const res = await databaseSetup()
+  // return c.json(res)
+  return c.text("setting up database")
 })
 
 console.log(`Server is running on port ${ENV.SERVER_PORT}`)

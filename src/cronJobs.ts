@@ -1,20 +1,18 @@
 import {
+  POST_BLOCK,
+  POST_NODEOPERATORS,
   POST_VALIDATORS,
   FETCH_AND_UPDATE_VALIDATORS,
-  FETCH_AND_INSERT_BLOCK,
-  POST_NODEOPERATORS,
-  GET_VALIDATORS,
-  GET_BLOCKS,
-} from "./database"
+} from "./database/insert_update"
+import { GET_VALIDATORS, GET_BLOCKS } from "./database/query"
 import {
   getLatestValidatorSubgraphResult,
   getLatestNodeOperatorSubgraphResult,
   hashData,
-} from "."
+} from "./utils"
 
-import { ENV } from "./constants"
+import { ENV } from "./utils/constants"
 const TelegramBot = require("node-telegram-bot-api")
-
 var cron = require("node-cron")
 
 /* @Developer
@@ -72,7 +70,7 @@ const job2 = cron.schedule("*/30 * * * *", async () => {
 
 const job3 = cron.schedule("*/12 * * * * *", async () => {
   try {
-    await FETCH_AND_INSERT_BLOCK()
+    await POST_BLOCK()
   } catch (error) {
     console.error("Error in cron job3:", error)
   }
