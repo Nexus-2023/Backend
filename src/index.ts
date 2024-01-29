@@ -9,7 +9,7 @@ import { Hono } from "hono"
 import { request, gql } from "graphql-request"
 import { API_ENDPOINTS, ENV } from "./utils/constants"
 import { GET_VALIDATORS } from "./database/query"
-import { getLatestValidatorSubgraphResult } from "./utils"
+import { getLatestValidatorSubgraphResult } from "./subgraph/fetch"
 import { databaseSetup } from "./database/setup"
 dotenv.config()
 
@@ -22,6 +22,10 @@ app.get("/graphql", async c => {
   const result = await getLatestValidatorSubgraphResult()
   return c.json(result)
 })
+
+/*
+Write routes for frontEnd to call
+*/
 
 app.get("/", async c => {
   // const res = await GET_VALIDATORS()

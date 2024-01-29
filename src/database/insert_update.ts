@@ -8,11 +8,7 @@ import {
   subgraphValidator,
 } from "../types"
 
-import {
-  getLatestValidatorSubgraphResult,
-  arraysEqual,
-  calculateScore,
-} from "../utils"
+import { arraysEqual, calculateScore } from "../utils"
 
 import {
   GET_VALIDATORS,
@@ -58,24 +54,22 @@ export async function POST_VALIDATORS({
       try {
         const res = await consensusDataApi(apiUrl)
 
-        const validatorResults = res.data
+        const validatorResult = res.data
 
-        for (const validatorResult of validatorResults) {
-          const validator: Validator = {
-            public_key: validatorResult.validator.pubkey,
-            validator_index: validatorResult.index,
-            cluster_id: subgraphValidator.clusterId,
-            balance: validatorResult.balance,
-            status: subgraphValidator.status,
-            score: calculateScore(
-              validatorResult.balance,
-              validatorResult.validator.slashed
-            ),
-            rollupname: subgraphValidator.rollup,
-          }
-
-          await INSERT_VALIDATOR({ validator })
+        const validator: Validator = {
+          public_key: validatorResult.validator.pubkey,
+          validator_index: validatorResult.index,
+          cluster_id: subgraphValidator.clusterId,
+          balance: validatorResult.balance,
+          status: subgraphValidator.status,
+          score: calculateScore(
+            validatorResult.balance,
+            validatorResult.validator.slashed
+          ),
+          rollupname: subgraphValidator.rollup,
         }
+
+        await INSERT_VALIDATOR({ validator })
       } catch (error) {
         console.error("Error fetching or posting validator data:", error)
       }

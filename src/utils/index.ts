@@ -1,24 +1,7 @@
-import {
-  GET_ALL_DATA,
-  GET_ALL_ROLLUPS,
-  GET_ALL_CLUSTERS,
-  GET_ALL_NODE_OPERATORS,
-  GET_ALL_VALIDATORS,
-} from "../subgraph/queries"
-
-import { client } from "../connectors/subgraph_connector"
-import { request, gql } from "graphql-request"
-import { API_ENDPOINTS, ENV } from "../utils/constants"
-import {
-  validatorSubgraphResult,
-  ValidatorData,
-  nodeOperatorSubgraph,
-  nodeOperatorData,
-} from "../types"
 import { createHash } from "crypto"
 
 // TODO : Implement CalulateScore
-function calculateScore(balance: number, slashed: boolean) {
+export function calculateScore(balance: number, slashed: boolean) {
   const threshold = 32000000000
 
   if (balance > threshold) {
@@ -29,28 +12,8 @@ function calculateScore(balance: number, slashed: boolean) {
 }
 
 // Function to compare two arrays for equality
-function arraysEqual(array1: any, array2: any) {
+export function arraysEqual(array1: any, array2: any) {
   return JSON.stringify(array1) === JSON.stringify(array2)
-}
-
-const getLatestValidatorSubgraphResult = async () => {
-  // const result =  await client.query({ query : GET_ALL_ROLLUPS })
-  const result: ValidatorData = await request(
-    API_ENDPOINTS.SUBGRAPH,
-    GET_ALL_VALIDATORS
-  )
-  // return result.data.validators
-  return result.validators
-}
-
-export const getLatestNodeOperatorSubgraphResult = async () => {
-  // const result =  await client.query({ query : GET_ALL_ROLLUPS })
-  const result: nodeOperatorData = await request(
-    API_ENDPOINTS.SUBGRAPH,
-    GET_ALL_NODE_OPERATORS
-  )
-  // return result.data.validators
-  return result.nodeOperator
 }
 
 export function hashData(data: any): string {
@@ -58,5 +21,3 @@ export function hashData(data: any): string {
   hash.update(JSON.stringify(data))
   return hash.digest("hex")
 }
-
-export { calculateScore, arraysEqual, getLatestValidatorSubgraphResult }

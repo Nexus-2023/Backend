@@ -5,12 +5,12 @@ import {
   FETCH_AND_UPDATE_VALIDATORS,
 } from "./database/insert_update"
 import { GET_VALIDATORS, GET_BLOCKS } from "./database/query"
+import { hashData } from "./utils"
+
 import {
   getLatestValidatorSubgraphResult,
   getLatestNodeOperatorSubgraphResult,
-  hashData,
-} from "./utils"
-
+} from "./subgraph/fetch"
 import { ENV } from "./utils/constants"
 const TelegramBot = require("node-telegram-bot-api")
 var cron = require("node-cron")
