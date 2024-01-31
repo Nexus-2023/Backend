@@ -2,18 +2,46 @@ import {
   POST_BLOCK,
   POST_NODEOPERATORS,
   POST_VALIDATORS,
-  FETCH_AND_UPDATE_VALIDATORS,
 } from "./database/insert_update"
-import { GET_VALIDATORS, GET_BLOCKS } from "./database/query"
-import { hashData } from "./utils"
 
 import {
-  getLatestValidatorSubgraphResult,
+  FETCH_CONSENSUS_VALIDATOR,
+  FETCH_AND_POST_BLOCK,
+  FETCH_AND_POST_VALIDATORS,
+  FETCH_AND_UPDATE_VALIDATORS,
+} from "./connectors/consensus_connector"
+import { GET_VALIDATORS, GET_BLOCKS } from "./database/query"
+import { hashData } from "./utils"
+import {
   getLatestNodeOperatorSubgraphResult,
-} from "./subgraph/fetch"
+  getLatestValidatorSubgraphResult,
+} from "./connectors/subgraph_connector"
 import { ENV } from "./utils/constants"
+
 const TelegramBot = require("node-telegram-bot-api")
 var cron = require("node-cron")
+
+// let previousHash: string | null = null
+// const job1 = cron.schedule("*/30 * * * *", async () => {
+//   try {
+//     const validatorSubgraphResult = await getLatestValidatorSubgraphResult()
+
+//     if (validatorSubgraphResult && validatorSubgraphResult.length > 0) {
+//       const currentHash = hashData(validatorSubgraphResult)
+
+//       if (currentHash !== previousHash) {
+//         await POST_VALIDATORS({ validatorSubgraphResult })
+//         previousHash = currentHash
+//       } else {
+//         console.log("No new validators found in the subgraph query result.")
+//       }
+//     } else {
+//       console.error("No validators found in the subgraph query result.")
+//     }
+//   } catch (error) {
+//     console.error("Error in cron job1:", error)
+//   }
+// })
 
 /* @Developer
     This cron job is scheduled to run every 30 minutes using node-cron.
@@ -29,6 +57,7 @@ var cron = require("node-cron")
     5. If the hashes differ, call POST_VALIDATORS() and update the previous hash.
     6. If the hashes are the same, log that no new validators were found.
 */
+
 let previousHash: string | null = null
 const job1 = cron.schedule("*/30 * * * *", async () => {
   try {
@@ -38,7 +67,7 @@ const job1 = cron.schedule("*/30 * * * *", async () => {
       const currentHash = hashData(validatorSubgraphResult)
 
       if (currentHash !== previousHash) {
-        await POST_VALIDATORS({ validatorSubgraphResult })
+        await FETCH_AND_POST_VALIDATORS({ validatorSubgraphResult })
         previousHash = currentHash
       } else {
         console.log("No new validators found in the subgraph query result.")
@@ -70,7 +99,7 @@ const job2 = cron.schedule("*/30 * * * *", async () => {
 
 const job3 = cron.schedule("*/12 * * * * *", async () => {
   try {
-    await POST_BLOCK()
+    await FETCH_AND_POST_BLOCK()
   } catch (error) {
     console.error("Error in cron job3:", error)
   }

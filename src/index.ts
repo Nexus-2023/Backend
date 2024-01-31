@@ -9,7 +9,7 @@ import { Hono } from "hono"
 import { request, gql } from "graphql-request"
 import { API_ENDPOINTS, ENV } from "./utils/constants"
 import { GET_VALIDATORS } from "./database/query"
-import { getLatestValidatorSubgraphResult } from "./subgraph/fetch"
+import { getLatestValidatorSubgraphResult } from "./connectors/subgraph_connector"
 import { databaseSetup } from "./database/setup"
 dotenv.config()
 
