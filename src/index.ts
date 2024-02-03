@@ -11,6 +11,7 @@ import { API_ENDPOINTS, ENV } from "./utils/constants"
 import { GET_VALIDATORS } from "./database/query"
 import { getLatestValidatorSubgraphResult } from "./connectors/subgraph_connector"
 import { databaseSetup } from "./database/setup"
+
 dotenv.config()
 
 const app = new Hono()
@@ -28,9 +29,6 @@ Write routes for frontEnd to call
 */
 
 app.get("/", async c => {
-  // const res = await GET_VALIDATORS()
-  const res = await databaseSetup()
-  // return c.json(res)
   return c.text("setting up database")
 })
 
