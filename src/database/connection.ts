@@ -2,43 +2,44 @@
 
 import { Pool, PoolClient } from "pg"
 import { DatabaseConfig } from "../types"
-import { ENV } from "../utils/constants"
 
-// Database configuration
-const dbConfig: DatabaseConfig = {
-  host: ENV.DB_HOST,
-  port: ENV.DB_PORT,
-  user: ENV.DB_USERNAME,
-  password: ENV.DB_PASSWORD,
-  database: ENV.DB_DATABASENAME,
-}
+export class DatabaseConnection {
+  private pool: Pool
 
-// Create a database connection pool
-const pool = new Pool(dbConfig)
+  constructor(config: DatabaseConfig) {
+    this.pool = new Pool(config)
+  }
 
-// Function to get a database client from the pool with authentication
-export async function getClient(): Promise<PoolClient | null> {
-  // if (authToken === 'valid_token') {
-  //   return pool.connect();
-  // } else {
-  //   console.error('Authentication failed');
-  //   return null;
-  // }
+  async getClient(): Promise<PoolClient | null> {
+    try {
+      const client = await this.pool.connect()
+      return client
+    } catch (error) {
+      console.error("Failed to connect to the database pool", error)
+      return null
+    }
+  }
 
-  if (pool) {
-    return pool.connect()
-  } else {
-    console.error("failed to connect to database pool")
-    return null
+  async releaseClient(client: PoolClient): Promise<void> {
+    try {
+      console.log("Client released")
+      client.release()
+    } catch (error) {
+      console.error("Failed to release client", error)
+    }
   }
 }
 
-// Function to release the database client back to the pool
-export async function releaseClient(client: PoolClient): Promise<void> {
-  if (client) {
-    console.error("client released")
-    client.release()
-  } else {
-    console.error("failed to release client")
+/* Example Usage:
+import dbConfig from "./config"
+
+const databaseManager = new DatabaseManager(dbConfig);
+
+async function exampleUsage() {
+  const client = await databaseManager.getClient();
+  if (client) {  
+    await databaseManager.releaseClient(client);
   }
-}
+}  
+
+*/

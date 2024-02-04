@@ -1,21 +1,5 @@
-import {
-  POST_BLOCK,
-  POST_NODEOPERATORS,
-  POST_VALIDATORS,
-} from "./database/insert_update"
-
-import {
-  FETCH_CONSENSUS_VALIDATOR,
-  FETCH_AND_POST_BLOCK,
-  FETCH_AND_POST_VALIDATORS,
-  FETCH_AND_UPDATE_VALIDATORS,
-} from "./connectors/consensus_connector"
-import { GET_VALIDATORS, GET_BLOCKS } from "./database/query"
 import { hashData } from "./utils"
-import {
-  getLatestNodeOperatorSubgraphResult,
-  getLatestValidatorSubgraphResult,
-} from "./connectors/subgraph_connector"
+
 import { ENV } from "./utils/constants"
 
 const TelegramBot = require("node-telegram-bot-api")
