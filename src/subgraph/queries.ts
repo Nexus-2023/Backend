@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client"
 
-const GET_ALL_DATA = gql`
+export const GET_ALL_DATA = gql`
   {
     validators {
       id
@@ -33,7 +33,7 @@ const GET_ALL_DATA = gql`
   }
 `
 
-const GET_ALL_VALIDATORS = gql`
+export const GET_ALL_VALIDATORS = gql`
   {
     validators {
       clusterId
@@ -44,7 +44,7 @@ const GET_ALL_VALIDATORS = gql`
   }
 `
 
-const GET_ALL_NODE_OPERATORS = gql`
+export const GET_ALL_NODE_OPERATORS = gql`
   {
     nodeOperators {
       id
@@ -55,7 +55,7 @@ const GET_ALL_NODE_OPERATORS = gql`
   }
 `
 
-const GET_ALL_CLUSTERS = gql`
+export const GET_ALL_CLUSTERS = gql`
   {
     clusters {
       id
@@ -65,7 +65,7 @@ const GET_ALL_CLUSTERS = gql`
   }
 `
 
-const GET_ALL_ROLLUPS = gql`
+export const GET_ALL_ROLLUPS = gql`
   {
     rollups {
       bridgeContract
@@ -80,11 +80,3 @@ const GET_ALL_ROLLUPS = gql`
     }
   }
 `
-
-export {
-  GET_ALL_DATA,
-  GET_ALL_ROLLUPS,
-  GET_ALL_CLUSTERS,
-  GET_ALL_VALIDATORS,
-  GET_ALL_NODE_OPERATORS,
-}
